@@ -634,7 +634,7 @@ public:
     return true;
   }
 
-  bool show()
+  bool show(int options)
   {
     if ( widget == nullptr && py_last_link != nullptr )
     {
@@ -647,7 +647,7 @@ public:
     if ( widget == nullptr )
       return false;
 
-    display_widget(widget, WOPN_DP_TAB|WOPN_RESTORE);
+    display_widget(widget, options);
     return true;
   }
 
@@ -755,10 +755,10 @@ size_t pyscv_count(PyObject *py_this)
   return _this == nullptr ? 0 : _this->count();
 }
 
-bool pyscv_show(PyObject *py_this)
+bool pyscv_show(PyObject *py_this, int options = WOPN_DP_TAB|WOPN_RESTORE)
 {
   DECL_THIS;
-  return _this != nullptr && _this->show();
+  return _this != nullptr && _this->show(options);
 }
 
 void pyscv_close(PyObject *py_this)
