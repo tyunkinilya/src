@@ -3,6 +3,52 @@
 class simplecustviewer_t(object):
     """The base class for implementing simple custom viewers"""
 
+    WOPN_MDI      = 0x01 # no-op
+    WOPN_TAB      = 0x02 # no-op
+    WOPN_RESTORE  = _ida_kernwin.WOPN_RESTORE
+    """
+    if the widget is the only widget in a floating area when
+    it is closed, remember that area's geometry. The next
+    time that widget is created as floating (i.e., WOPN_DP_FLOATING)
+    its geometry will be restored (e.g., "Execute script"
+    """
+    WOPN_ONTOP       = 0x08 # no-op
+    WOPN_MENU        = 0x10 # no-op
+    WOPN_CENTERED    = 0x20 # no-op
+    WOPN_PERSIST     = _ida_kernwin.WOPN_PERSIST
+    """form will persist until explicitly closed with Close()"""
+    WOPN_DP_LEFT     = _ida_kernwin.WOPN_DP_LEFT
+    """ Dock widget to the left of dest_ctrl"""
+    WOPN_DP_TOP      = _ida_kernwin.WOPN_DP_TOP
+    """ Dock widget above dest_ctrl"""
+    WOPN_DP_RIGHT    = _ida_kernwin.WOPN_DP_RIGHT
+    """ Dock widget to the right of dest_ctrl"""
+    WOPN_DP_BOTTOM   = _ida_kernwin.WOPN_DP_BOTTOM
+    """ Dock widget below dest_ctrl"""
+    WOPN_DP_INSIDE   = _ida_kernwin.WOPN_DP_INSIDE
+    """ Create a new tab bar with both widget and dest_ctrl"""
+    WOPN_DP_TAB      = _ida_kernwin.WOPN_DP_TAB
+    """
+    Place widget into a tab next to dest_ctrl,
+    if dest_ctrl is in a tab bar
+    (otherwise the same as #WOPN_DP_INSIDE)
+    """
+    WOPN_DP_BEFORE   = _ida_kernwin.WOPN_DP_BEFORE
+    """
+    place widget before dst_form in the tab bar instead of after
+    used with #WOPN_DP_INSIDE and #WOPN_DP_TAB
+    """
+    WOPN_DP_FLOATING = _ida_kernwin.WOPN_DP_FLOATING
+    """
+    When floating or in a splitter (i.e., not tabbed),
+    use the widget's size hint to determine the best
+    geometry (Qt only)
+    """
+    WOPN_DP_SZHINT   = _ida_kernwin.WOPN_DP_SZHINT
+    """ Make widget floating"""
+    WOPN_DP_INSIDE_BEFORE = _ida_kernwin.WOPN_DP_INSIDE_BEFORE
+    WOPN_DP_TAB_BEFORE = _ida_kernwin.WOPN_DP_TAB_BEFORE
+
     class UI_Hooks_Trampoline(UI_Hooks):
         def __init__(self, v):
             UI_Hooks.__init__(self)
@@ -30,7 +76,7 @@ class simplecustviewer_t(object):
 
     def __init__(self):
         self.__this = None
-        self.__options = PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE
+        self.__options = simplecustviewer_t.WOPN_DP_TAB|simplecustviewer_t.WOPN_RESTORE
         self.ui_hooks_trampoline = self.UI_Hooks_Trampoline(self)
 
     @staticmethod
@@ -44,7 +90,7 @@ class simplecustviewer_t(object):
         """
         pass
 
-    def Create(self, title, options=PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE):
+    def Create(self, title, options=simplecustviewer_t.WOPN_DP_TAB|simplecustviewer_t.WOPN_RESTORE):
         """
         Creates the custom view. This should be the first method called after instantiation
 
@@ -55,10 +101,10 @@ class simplecustviewer_t(object):
         """
         self.title = title
         self.__this = _ida_kernwin.pyscv_init(self, title)
-        if options & PluginForm.WOPN_DP_FLOATING == 0:
-            self.__options = options|PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE
+        if options & simplecustviewer_t.WOPN_DP_FLOATING == 0:
+            self.__options = options|simplecustviewer_t.WOPN_DP_TAB|simplecustviewer_t.WOPN_RESTORE
         else:
-            self.__options = options|PluginForm.WOPN_RESTORE
+            self.__options = options|simplecustviewer_t.WOPN_RESTORE
         return True if self.__this else False
 
     def Close(self):
