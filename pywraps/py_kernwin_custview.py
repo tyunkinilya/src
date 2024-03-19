@@ -30,6 +30,7 @@ class simplecustviewer_t(object):
 
     def __init__(self):
         self.__this = None
+        self.__options = PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE
         self.ui_hooks_trampoline = self.UI_Hooks_Trampoline(self)
 
     @staticmethod
@@ -43,16 +44,21 @@ class simplecustviewer_t(object):
         """
         pass
 
-    def Create(self, title):
+    def Create(self, title, options=PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE):
         """
         Creates the custom view. This should be the first method called after instantiation
 
         @param title: The title of the view
+        @param options: One of PluginForm.WOPN_ constants
         @return: Boolean whether it succeeds or fails. It may fail if a window with the same title is already open.
                  In this case better close existing windows
         """
         self.title = title
         self.__this = _ida_kernwin.pyscv_init(self, title)
+        if options & PluginForm.WOPN_DP_FLOATING == 0:
+            self.__options = options|PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE
+        else:
+            self.__options = options|PluginForm.WOPN_RESTORE
         return True if self.__this else False
 
     def Close(self):
@@ -69,7 +75,7 @@ class simplecustviewer_t(object):
         Shows an already created view. It the view was closed, then it will call Create() for you
         @return: Boolean
         """
-        return _ida_kernwin.pyscv_show(self.__this)
+        return _ida_kernwin.pyscv_show(self.__this, self.__options)
 
     def Refresh(self):
         return _ida_kernwin.pyscv_refresh(self.__this)
