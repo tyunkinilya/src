@@ -75,8 +75,10 @@ class PluginForm(object):
         """
         if options == self.WOPN_CREATE_ONLY:
             options = -1
-        else:
+        elif options & PluginForm.WOPN_DP_FLOATING == 0:
             options |= PluginForm.WOPN_DP_TAB|PluginForm.WOPN_RESTORE
+        else:
+            options |= PluginForm.WOPN_RESTORE
         return _ida_kernwin.plgform_show(self.__clink__, self, caption, options)
 
 
